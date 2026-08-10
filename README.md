@@ -10,22 +10,14 @@ whatever server this is deployed on. Speaks one JSON envelope over `POST /proxy`
 and responds with `{ success, meta, status, statusText, data, headers }`.
 `GET /health` for a liveness check.
 
-## Install (first time, one command)
+## Install or update — same one command every time
 
 ```bash
-git clone https://github.com/Zoro-py/zoro_calendar_proxy.git /opt/n8n-relay && \
-cd /opt/n8n-relay && \
-read -p "Secret (Enter = auto-generate): " S; [ -z "$S" ] && S=$(openssl rand -hex 32); \
-printf "PROXY_SECRET=%s\nPORT=8787\n" "$S" > .env && \
-docker compose up -d --build && \
-echo "Secret in use:" && cat .env
+[ -d /opt/n8n-relay ] || git clone https://github.com/Zoro-py/zoro_calendar_proxy.git /opt/n8n-relay; \
+cd /opt/n8n-relay && git pull origin main && chmod +x deploy.sh && ./deploy.sh
 ```
 
-## Update later
+- First run: clones the repo, asks for a secret (Enter = auto-generate a random one), builds, starts.
+- Every later run: pulls the latest code and rebuilds — `.env` already exists so it won't ask again.
 
-```bash
-cd /opt/n8n-relay && git pull origin main && docker compose up -d --build
-```
-
-`.env` is git-ignored, so pulling never touches your secret. Each deployed
-instance keeps its own `PROXY_SECRET` — set a different one per server.
+Each server keeps its own `PROXY_SECRET` in its own `.env` (git-ignored, never touched by `git pull`).
