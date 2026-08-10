@@ -1,0 +1,10 @@
+services:
+  n8n-relay:
+    build: .
+    container_name: n8n-relay
+    restart: always
+    ports:
+      - "${PORT:-8787}:${PORT:-8787}"
+    environment:
+      - PROXY_SECRET=${PROXY_SECRET}
+      - PORT=${PORT:-8787}
